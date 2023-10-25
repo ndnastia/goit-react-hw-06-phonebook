@@ -1,30 +1,47 @@
-import ContactListItem from 'components/ContactListItem/ContactListItem';
 
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteContact, getContact } from 'redux/contactsSlice';
+import { getFilter } from 'redux/filterSlice';
 
-const ContactList = ({ contacts, filter, onDelete }) => {
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+const ContactList = () => {
+  const phonebooks = useSelector(getContact);
+  const filtered = useSelector(getFilter);
+  const dispatch = useDispatch();
 
-  return (
-    <ul>
-      {filteredContacts.map(contact => (
-        <ContactListItem key={contact.id} contact={contact} onDelete={onDelete} />
-      ))}
-    </ul>
-  );
-};
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  filter: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
-};
+  
+   
+
+
+    const lowerCase = filtered.toLowerCase();
+    const filteredContacts = phonebooks.filter(phonebook =>
+        (phonebook.name.toLowerCase().includes(lowerCase)));
+  
+    const deletedContact = (contactId) => {
+        dispatch(deleteContact(contactId))
+    };
+    
+
+    return (
+      <ul>
+        {filteredContacts.map(({name, number, id})=> (
+          <li key={id}>
+          <span>{name}: </span>
+          <span>{number}</span>
+          <button
+            type="button"
+            
+            onClick={() => deletedContact(id)}
+          >
+            Delete
+          </button>
+        </li>
+        ))}
+      </ul>
+    );
+  }
+
+    
+
+
 
 export default ContactList;
